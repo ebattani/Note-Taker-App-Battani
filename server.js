@@ -1,68 +1,65 @@
-//dependencies
+//Modules and dependecies using require and express
 const fs = require("fs");
 const express = require("express");
 const path = require("path");
-
-// Sets up the Express App
 const app = express();
-// Sets port for listening and let heroku decide on port, if not, use port 8080
-const PORT = process.env.PORT || 8000;
 
-//serve images, CSS files, and JavaScript files in a directory named public
+//Use the PORT environment variable and if none is available then use PORT 4000
+const PORT = process.env.PORT || 4000;
+
+
+//Takes the images, JS and CSS files in the public directory
 app.use(express.static('public'));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
 
-//route to notes.html
+//Adds a route to the notes.html file 
 app.get("/notes", (req, res) => {
     res.sendFile(path.join(__dirname, "/public/notes.html"));
 });
 
-//route to read the `db.json` file and return all saved notes as JSON.
+//Adds a route to GET info from the db.json file and return all previously saved notes
 app.get("/api/notes", (req, res) => {
     res.sendFile(path.join(__dirname, "/db/db.json"));
 });
 
-//route to index.html aka main page
-
+//Adds route to GET using the universal variable from the index.html page
 app.get("*", (req, res) => {
     res.sendFile(path.join(__dirname, "/public/index.html"));
 });
 
-//receive a new note to save on the request body, add it to the `db.json` file, 
-//and then return the new note to the client.
+
+//Takes the new note and adds it to the saved notes in db.json
 app.post("/api/notes", (req, res) => {
-    let newNote = req.body;
-    let noteList = JSON.parse(fs.readFileSync("./db/db.json", "utf8"));
-    let notelength = (noteList.length).toString();
+    let newNoteIn = req.body;
+    let list = JSON.parse(fs.readFileSync("./db/db.json", "utf8"));
+    let noteLen = (list.length).toString();
 
-    //create new property called id based on length and assign it to each json object
-    newNote.id = notelength;
-    //push updated note to the data containing notes history in db.json
-    noteList.push(newNote);
+    //Assigns a new variable for length and pushes the new note to the list
+    newNoteIn.id = noteLen;
+    list.push(newNoteIn);
 
-    //write the updated data to db.json
-    fs.writeFileSync("./db/db.json", JSON.stringify(noteList));
-    res.json(noteList);
+    //Writes to the db.json file
+    fs.writeFileSync("./db/db.json", JSON.stringify(list));
+    res.json(list);
 })
 
-//delete note according to their tagged id.
+//Deletes note
+//Filters notes that have no matching ID, saves them to a new array and then matching array is deleted.
 app.delete("/api/notes/:id", (req, res) => {
-    let noteList = JSON.parse(fs.readFileSync("./db/db.json", "utf8"));
+    let list = JSON.parse(fs.readFileSync("./db/db.json", "utf8"));
     let noteId = (req.params.id).toString();
 
-    //filter all notes that does not have matching id and saved them as a new array
-    //the matching array will be deleted
-    noteList = noteList.filter(selected =>{
+    list = list.filter(selected =>{
         return selected.id != noteId;
     })
 
-    //write the updated data to db.json and display the updated note
-    fs.writeFileSync("./db/db.json", JSON.stringify(noteList));
-    res.json(noteList);
+    //Writes to the db.json file and displays updated notes
+    fs.writeFileSync("./db/db.json", JSON.stringify(list));
+    res.json(list);
 });
 
 
-//listen tot he port when deployed
+//Listen to post when deployed
 app.listen(PORT, () => console.log("Server listening on port " + PORT));
