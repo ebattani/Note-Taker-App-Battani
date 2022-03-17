@@ -20,20 +20,18 @@
     
   *How to install:*
     
-  Install
+  Install by cloning GitHub repo. Make sure to download all necessary Node and Express add ons. 
     
   ## Usage 
     
   *Instructions:*
-    
-  Examples
+  
+  After installing. Simply open the terminal and use node server.js to run the application and follow the prompts. 
     
   ## Contributing
     
   *No contrubutions are available at this time.*
-    
-  No contributions at this time.
-    
+
   ## Tests
     
   *How to run application/tests:*
@@ -51,6 +49,6 @@
    
   GitHub: [@ebattani](https://api.github.com/users/ebattani)
 
-  Email: null
+  Email: battaniethan@gmail.com
 
   
